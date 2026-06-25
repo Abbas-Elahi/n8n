@@ -1,0 +1,369 @@
+{
+  "name": "Node Connections",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -1040,
+        304
+      ],
+      "id": "948c8c67-85d9-4312-aaad-35cbf538d637",
+      "name": "When chat message received",
+      "webhookId": "5ceab5e7-6405-4128-92e6-266967c74bb3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.chatInput }}",
+                    "rightValue": "=^-?\\d+$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "152185cc-5021-4904-b0e5-1846e7896c22"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "number"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        304
+      ],
+      "id": "534f44d5-ff5a-4d3d-8850-892f0be5ed3f",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b0a7170e-ff9f-4f1a-a58c-6b9a41e0ed12",
+              "name": "number",
+              "value": "={{ $json.chatInput }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        208
+      ],
+      "id": "8f2948d7-41fe-4356-89a8-f09a6550ef93",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Loop over input items and add a new field called 'my_new_field' to the JSON of each one\noutput = []\n\nfor item in _items:\n    num = item[\"json\"][\"number\"]\n\n    output.append({\n        \"json\": {\n            \"number1\": num ** 2\n        }\n    })\n\nreturn output"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        208
+      ],
+      "id": "65b5786a-91f2-4ce5-bd0b-53f5503e9107",
+      "name": "Code in Python"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "# Loop over input items and add a new field called 'my_new_field' to the JSON of each one\noutput = []\n\nfor item in _items:\n    num = int(item[\"json\"][\"number\"])\n\n    output.append({\n        \"json\": {\n            \"number2\": (num ** 2) % 100\n        }\n    })\n\nreturn output"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        384
+      ],
+      "id": "1924b797-adbe-4fc2-ae66-7c2da73f1d94",
+      "name": "Code in Python1"
+    },
+    {
+      "parameters": {
+        "message": "=لطفا یک عدد وارد کنید؟",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        400
+      ],
+      "id": "931dd08f-ea9f-49f2-b951-8c134c6d4161",
+      "name": "Chat",
+      "webhookId": "6d44329f-d8c9-4b01-a1b2-fccc1ad69f8f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "33ea91ee-2cf9-4268-ab50-22274e166c72",
+              "leftValue": "={{ $json.number1 }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        224
+      ],
+      "id": "f263f375-a19c-4843-98b0-f5fbf2e9ad5d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "message": "=نتیجه : {{ $json.number1 }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f7a5f83c-8521-4c5e-9ff0-0c50ef1b6df9",
+      "name": "Chat1",
+      "webhookId": "6e7713a3-2495-42a5-a79a-6adfa89f48fc"
+    },
+    {
+      "parameters": {
+        "message": "عدد بزرگتر از 100 می باشد . 5 ثانیه منتظر بمان تا باقی مانده  ی آن را بر 100 حساب  کنیم و بهت نمایش بدیم",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        16,
+        240
+      ],
+      "id": "dd68162c-f373-4464-9f48-34871a8dbf72",
+      "name": "Chat2",
+      "webhookId": "11e2c676-9799-4fc3-b6fc-e6b46555b97a"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        176,
+        336
+      ],
+      "id": "4809a0f4-dbe7-45f4-973d-936a91dd2981",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "message": "=باقی‌مانده تقسیم بر ۱۰۰ برابر است با: {{ $('Code in Python1').item.json.number2 }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        336
+      ],
+      "id": "4efd5cdc-3f84-41e0-8eb2-7d84c2f35f9b",
+      "name": "Chat3",
+      "webhookId": "be953321-be92-453a-87ec-39d3b07a452f"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        336
+      ],
+      "id": "22a7e1a7-5cd0-427a-9282-bd8c6e597eef",
+      "name": "Wait",
+      "webhookId": "c2781134-48d7-49e2-bb16-9f4a14a0363e"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in Python",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in Python1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Chat2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Chat3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ae06cc1f-1a25-49d8-a3c7-0d982ba57ef5",
+  "meta": {
+    "instanceId": "2e2e490029f128e9147b243e8ee375a58ca01756ddf1c2530314a5f0e2e2cb23"
+  },
+  "nodeGroups": [],
+  "id": "ewGj9H26M3KT5dBM",
+  "tags": []
+}
