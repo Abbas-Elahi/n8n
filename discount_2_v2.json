@@ -1,0 +1,563 @@
+{
+  "name": "discount_2_completed",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "فرم سفارش محصول",
+        "formDescription": "مشخصات خود و تعداد سفارش را وارد نمایید",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "نام خود را وارد کنید",
+              "fieldName": "name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "نام خانوادگی خود را وارد کنید",
+              "fieldName": "lastName",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "شماره تلفن خود را وارد کنید",
+              "fieldName": "phoneNum",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "عنوان محصول را انتخاب کنید",
+              "fieldType": "radio",
+              "fieldName": "productType",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "بهداشتی"
+                  },
+                  {
+                    "option": "مواد غذایی"
+                  },
+                  {
+                    "option": "لباس"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        32
+      ],
+      "id": "c50cf115-e5d4-488a-8d22-bd81f6f26d9f",
+      "name": "On form submission",
+      "webhookId": "aa062f56-14db-4387-96ef-d82e0ce91a76"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e581824a-b067-4ed3-bcb7-3478d78aec2d",
+              "leftValue": "={{ String($json.phoneNum) }}",
+              "rightValue": "09",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            },
+            {
+              "id": "ebe94bf4-3045-433f-b5fe-6b309c811641",
+              "leftValue": "={{ String($json.phoneNum).length }}",
+              "rightValue": "11",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        32
+      ],
+      "id": "bfcdce9c-47b2-41fe-b90e-dd98422c1a98",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.productType }}",
+                    "rightValue": "بهداشتی",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4ecf782c-313b-4e98-af25-9b343841dfbb"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hygiene"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cad4b7cc-e782-4c1d-95ff-030658b59c7f",
+                    "leftValue": "={{ $json.productType }}",
+                    "rightValue": "مواد غذایی",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "food"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "21651c9f-7ba7-41bd-8858-e9a5896bd940",
+                    "leftValue": "={{ $json.productType }}",
+                    "rightValue": "لباس",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "clothes"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -48
+      ],
+      "id": "f34d0889-dcac-42c8-9cb6-51502d275f3e",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "494666e7-48bf-4d0e-b5da-eedd86b36eb4",
+              "name": "discount",
+              "value": 10,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {},
+        "includeOtherFields": true
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -192
+      ],
+      "id": "d472a008-932d-48ae-bfff-9e34d4d229ad",
+      "name": "Hygiene Discount"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a917f2a5-f8c8-452d-9602-67ddbeacd045",
+              "name": "discount",
+              "value": 15,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {},
+        "includeOtherFields": true
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        -32
+      ],
+      "id": "abbd54b3-f157-4eb2-adc2-28d2703743f7",
+      "name": "Food Discount"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ff0f797d-ef62-418d-abfb-5df5c3e883ff",
+              "name": "discount",
+              "value": 20,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {},
+        "includeOtherFields": true
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        128
+      ],
+      "id": "ab3f38df-b726-4d6b-b206-261d4a49397d",
+      "name": "Clothes Discount"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ab3a5342-f16d-446e-b354-7f584aea6fc8",
+              "name": "نام",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "cd2137f8-99e1-4c26-b502-ed4c441013ba",
+              "name": "نام خانوادگی",
+              "value": "={{ $json.lastName }}",
+              "type": "string"
+            },
+            {
+              "id": "d998a3bf-13d6-4c68-bea8-fbd6ef505b93",
+              "name": "شماره تلفن",
+              "value": "={{ $json.phoneNum }}",
+              "type": "string"
+            },
+            {
+              "id": "c40ba95a-4013-45c1-87f0-6c4420d282e3",
+              "name": "نوع محصول",
+              "value": "={{ $json.productType }}",
+              "type": "string"
+            },
+            {
+              "id": "774baa25-7a16-4454-8653-17c1f35b752e",
+              "name": "تخفیف",
+              "value": "={{ $json.discount }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        960,
+        -32
+      ],
+      "id": "5f20e2f3-aaea-45f4-8ff7-2d5d4747d12d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        -32
+      ],
+      "id": "8975a864-e733-4284-aa13-af4b15eb4f9e",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "returnBinary",
+        "completionTitle": "از وقتی که گذاشتید متشکریم",
+        "completionMessage": "رسید اطلاعات شما دانلود میشود",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1376,
+        -32
+      ],
+      "id": "bdd6eb4f-62bc-4a29-b3db-982f980a3a43",
+      "name": "Form1",
+      "webhookId": "9e028566-dfaf-4c74-be73-4af61cae0819"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "شماره تلفن صحیح را وارد کنید",
+              "fieldType": "text",
+              "fieldName": "phoneNum",
+              "placeholder": "مثلاً 09123456789",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "شماره تلفن نامعتبر است",
+          "formDescription": "شماره تلفن باید با 09 شروع شود و دقیقاً 11 رقم باشد.",
+          "buttonLabel": "ادامه"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        352,
+        160
+      ],
+      "id": "09b42494-51a7-4c3d-90a4-4e0ef7953970",
+      "name": "Form",
+      "webhookId": "011b23c7-6fa7-419b-904d-93d7d54cc71a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3f7f04a-3e19-4b92-9615-56d50270bbb4",
+              "name": "name",
+              "value": "={{ $('On form submission').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "efebe4d2-de54-4747-b223-407138d465d3",
+              "name": "lastName",
+              "value": "={{ $('On form submission').item.json.lastName }}",
+              "type": "string"
+            },
+            {
+              "id": "94ba47e8-c584-470b-b7dc-0265ee4d2b50",
+              "name": "phoneNum",
+              "value": "={{ $json.phoneNum }}",
+              "type": "string"
+            },
+            {
+              "id": "ec75c6db-98dd-4aa7-8063-d5088ad812e4",
+              "name": "productType",
+              "value": "={{ $('On form submission').item.json.productType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        160
+      ],
+      "id": "52ef475b-df0d-433e-8a17-30a7f474fa81",
+      "name": "Edit New Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Hygiene Discount",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Food Discount",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clothes Discount",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hygiene Discount": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Food Discount": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clothes Discount": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Form1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form": {
+      "main": [
+        [
+          {
+            "node": "Edit New Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit New Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4bbd7a16-a1cd-4e00-8036-fc7438c55bf4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2e2e490029f128e9147b243e8ee375a58ca01756ddf1c2530314a5f0e2e2cb23"
+  },
+  "nodeGroups": [],
+  "id": "discount_2_completed",
+  "tags": []
+}
