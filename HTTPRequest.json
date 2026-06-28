@@ -1,0 +1,125 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "text": "=دمای این ساعت:{{ $json.Temp }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        176
+      ],
+      "id": "53f0d770-5719-4bd8-b488-c0e81a2e7a48",
+      "name": "Send a text message",
+      "webhookId": "068d855e-d87c-4301-8a09-fa7de27d306b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ec54feb-7c20-411b-a9bc-f5efb3fcbbee",
+              "name": "Temp",
+              "value": "={{ $json.current_weather.temperature }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        176
+      ],
+      "id": "fb9a7063-b3b8-42e9-b44b-9be3dbeb3f0f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=35.6892&longitude=51.3890&current_weather=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -256,
+        176
+      ],
+      "id": "a03f4e0b-0bd4-4d43-a8e9-e4d2a95c784e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        176
+      ],
+      "id": "98e49b35-0422-4145-b11a-a6a589388589",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "794db38b-ab9c-4d86-8fc5-3fee6330f61e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "85b739156a2a20d8e5d25a0fc62beb7b3227e4f6b8fc0a2b9e262100d5dbd1de"
+  },
+  "id": "AgwpP8bDngra2mhW",
+  "tags": []
+}
