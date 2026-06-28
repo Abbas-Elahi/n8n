@@ -1,0 +1,134 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -576,
+        320
+      ],
+      "id": "8efc9a2f-6b0e-4494-ad29-32a5ae3bf6e0",
+      "name": "Send a text message",
+      "webhookId": "64698fed-cc34-4a90-921b-e75850400f70"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "سلام روزت به خیر",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -576,
+        112
+      ],
+      "id": "48de4b0c-1603-4933-8ceb-bfb80f81815b",
+      "name": "Send a text message1",
+      "webhookId": "0ff7d5a3-13d3-4361-a35e-3ec40c058905"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4c0a878e-8df2-47b0-8172-5f45c9fd73c3",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -816,
+        208
+      ],
+      "id": "90bdafd7-6693-43fa-a242-eeb7b3a04ba6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1040,
+        208
+      ],
+      "id": "6178d62d-756e-41e7-82d5-2e0e48d6cc8a",
+      "name": "Telegram Trigger",
+      "webhookId": "5a86030e-c781-4e1c-811f-208451ab5186"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9614ede8-cc45-4836-8bac-6cccab906cd8",
+  "meta": {
+    "instanceId": "85b739156a2a20d8e5d25a0fc62beb7b3227e4f6b8fc0a2b9e262100d5dbd1de"
+  },
+  "id": "AgwpP8bDngra2mhW",
+  "tags": []
+}

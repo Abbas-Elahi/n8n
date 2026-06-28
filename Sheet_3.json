@@ -1,0 +1,115 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        560,
+        0
+      ],
+      "id": "0d6a878a-9c10-41bf-b201-856b05ffc132",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b969bdab-49d0-486c-869d-3c176902a5af",
+              "name": "FirstName",
+              "value": "Amir",
+              "type": "string"
+            },
+            {
+              "id": "7985027b-5eed-4907-921a-f3212a56716a",
+              "name": "LastName",
+              "value": "=Mohammadi",
+              "type": "string"
+            },
+            {
+              "id": "f9a520d0-3f62-427a-a9e7-884a81686706",
+              "name": "Age",
+              "value": "=20",
+              "type": "number"
+            },
+            {
+              "id": "a9dda9bb-ea28-44a0-b47a-b07388059b04",
+              "name": "married",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        0
+      ],
+      "id": "b2968754-314b-49b0-bd5f-6c947cc5d98d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a7f5cced-ed6e-4cd2-84d9-bf3d8a99ac71",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "76583957-d943-4528-8381-d6a54dd35814",
+  "meta": {
+    "instanceId": "ba0481c1cdc8b1c0b2edba9db9e52d55734bb696cc19b7453705eb4536a875d5"
+  },
+  "id": "o9C6SnkcPzC9uPRV",
+  "tags": []
+}
