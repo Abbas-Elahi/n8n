@@ -1,0 +1,103 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2aaa9135-b968-4e60-a212-108d7d08c3f3",
+              "name": "Name",
+              "value": "={{ $json.query.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "ba597ec7-4ecf-41ee-a80f-1a622eac2006",
+              "name": "LastName",
+              "value": "={{ $json.query.LastName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        176
+      ],
+      "id": "9c547d9b-7da6-4ff7-8334-ca53fcf76052",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d9f1045d-f368-44eb-a0c8-371558630a32",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        176
+      ],
+      "id": "4d750ae9-50c8-4aa9-8239-e601a84b09c7",
+      "name": "Webhook",
+      "webhookId": "d9f1045d-f368-44eb-a0c8-371558630a32"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.Name }} {{ $json.LastName }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        656,
+        176
+      ],
+      "id": "d0e59956-8a82-4364-95f8-d57e4bce1dd4",
+      "name": "Send a text message",
+      "webhookId": "86fcb790-9f2e-46a9-af06-633f6a220e27"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d85666a0-d6a5-4e15-96fa-377a625c8c6c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "85b739156a2a20d8e5d25a0fc62beb7b3227e4f6b8fc0a2b9e262100d5dbd1de"
+  },
+  "id": "AgwpP8bDngra2mhW",
+  "tags": []
+}
