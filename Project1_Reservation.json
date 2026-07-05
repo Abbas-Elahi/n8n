@@ -1,0 +1,358 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "ثبت مشاوره",
+        "formDescription": "نوع مشاوره خود را ثبت نمایید",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "نام",
+              "placeholder": "نام خود را وارد کنید",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "نام خانوادگی",
+              "placeholder": "نام خانوادگی خود را وارد کنید",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "تاریخ مشاوره",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ساعت",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "12"
+                  },
+                  {
+                    "option": "14"
+                  },
+                  {
+                    "option": "16"
+                  },
+                  {
+                    "option": "20"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "ایمیل",
+              "fieldType": "email",
+              "placeholder": "ایمیل خود را وارد کنید",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "نوع مشاوره",
+              "fieldType": "radio",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "فردی"
+                  },
+                  {
+                    "option": "تحصیلی"
+                  },
+                  {
+                    "option": "شغلی"
+                  },
+                  {
+                    "option": "ازدواج"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -880,
+        80
+      ],
+      "id": "72f2104b-f7b1-43d3-a1e2-76ad15a1abca",
+      "name": "On form submission",
+      "webhookId": "26941738-0463-4c3c-b6e3-7d86980efb02"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b532cf71-6dc1-4bf7-a549-29674e22bfa8",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "23044863-92e7-4f4b-9481-9d248a9081a2",
+              "name": "Name",
+              "value": "={{ $json['نام'] }}",
+              "type": "string"
+            },
+            {
+              "id": "20d048d8-b020-4f93-b1f2-588e5d166b65",
+              "name": "LastName",
+              "value": "={{ $json['نام خانوادگی'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9bccd7fc-b4f5-46d0-ae6f-40829b5124ba",
+              "name": "Email",
+              "value": "={{ $json['ایمیل'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e1b6f87b-fc42-432e-a956-356378fba772",
+              "name": "Date",
+              "value": "={{ $json['تاریخ مشاوره'] }}",
+              "type": "string"
+            },
+            {
+              "id": "ac9d6592-7eaf-451f-ac10-454777f47637",
+              "name": "Type",
+              "value": "={{ $json['نوع مشاوره'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bea2ddc5-bfbe-4fe1-8254-d78013f1a64e",
+              "name": "Time",
+              "value": "={{ $json['ساعت'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -672,
+        80
+      ],
+      "id": "261198dc-4ca7-475f-aaa5-6134d50fbe59",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Edit Fields').item.json.Email }}",
+        "subject": "مشاوره شما ثبت شد",
+        "emailType": "text",
+        "message": "={{ $json.Name }} {{ $json.LastName }} عزیز\nمشاوره شما ثبت شد\nلطفا در تاریخ {{ $json.Date }} و در ساعت {{ $json.Time }} در دفتر مشاوره حضور داشته باشید",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f0361469-7c2a-465c-8c91-74e608d7d4d3",
+      "name": "Send a message",
+      "webhookId": "3f59f2fe-9119-4172-85b5-1dc0295d00e5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a82fba25-009b-455c-82bf-0f81c8e8fad4",
+              "leftValue": "={{ $json.available }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        80
+      ],
+      "id": "65f33d9d-ba47-48de-8361-ad065028181e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "=",
+          "mode": "id"
+        },
+        "start": "={{ $('Edit Fields').item.json.Date + 'T' + String($('Edit Fields').item.json.Time).padStart(2, '0') + ':00:00+03:30' }}",
+        "end": "={{ $('Edit Fields').item.json.Date + 'T' + String($('Edit Fields').item.json.Time - 2 + 4).padStart(2, '0') + ':00:00+03:30' }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "daacdf2c-ac55-4c5f-91cb-0e45a493dd95",
+      "name": "Create an event"
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "timeMin": "={{ $('Edit Fields').item.json.Date + 'T' + String($('Edit Fields').item.json.Time - 1).padStart(2, '0') + ':00:00+03:30' }}",
+        "timeMax": "={{ $('Edit Fields').item.json.Date + 'T' + String($('Edit Fields').item.json.Time - 1 + 2).padStart(2, '0') + ':00:00+03:30' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        80
+      ],
+      "id": "0259fd77-9a81-4c7a-9629-def3ea73a496",
+      "name": "Get availability in a calendar"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "زمان مشاوره موجود نمیباشد",
+        "completionMessage": "زمان انتخابی پر است.لطفا صفحه را مجددا باز و تایم دیگری را انتخاب کنید.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        176
+      ],
+      "id": "684d2374-0ab0-4478-8b92-32b9db0f2c5c",
+      "name": "Form1",
+      "webhookId": "dd9cff84-32eb-4083-b96c-2b98ae6b9b27"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get availability in a calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get availability in a calendar": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Form1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e742f58c-6395-47e3-b461-7ed3939d0d0b",
+  "meta": {
+    "instanceId": "ba0481c1cdc8b1c0b2edba9db9e52d55734bb696cc19b7453705eb4536a875d5"
+  },
+  "id": "yNq5Bw1nGBSDaBTi",
+  "tags": []
+}
