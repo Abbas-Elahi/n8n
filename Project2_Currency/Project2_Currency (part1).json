@@ -1,0 +1,525 @@
+{
+  "name": "Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        32
+      ],
+      "id": "131c3a49-8ca9-41e9-8e28-70231ab8c6d0",
+      "name": "Telegram Trigger",
+      "webhookId": "761da83b-0a48-4726-97e9-ebca0329e832",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "قیمت رمزارز ها",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9802df8a-ed41-459b-8671-9d2ede0da87a"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Crypto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5f1a712c-02d9-4abd-9514-47bd6a784eec",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "قیمت ارز ها",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Currency"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d8df120e-cdd7-43c6-85cf-5f02d6a6b1ff",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "قیمت طلا",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gold"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "bae03f4e-60d8-451a-a244-27f1204b77b8",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Start"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "c2aa051e-e24d-4c18-ae34-218a1127cc34",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "extraction",
+        "operation": "query",
+        "sessionMode": "new",
+        "url": "https://bit24.cash/coins/",
+        "prompt": "ثیمت تومانی تتر و بیت کوین را از این صفحه استخراج کن",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtop",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -320
+      ],
+      "id": "fe8d1bc0-35bc-4c0f-8726-b8b351a20263",
+      "name": "Query page",
+      "credentials": {
+        "airtopApi": {
+          "id": "2HrC0iPNlvyBp2NB",
+          "name": "Airtop account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.data.modelResponse }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        -320
+      ],
+      "id": "ff326097-3eca-4ece-824c-9de301e25772",
+      "name": "Send a text message",
+      "webhookId": "5d53fd93-82c5-4f26-a6c2-985268a14c6f",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v2/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer fc-03e8f6c1f02b47a5a8a67576aa9d9fb1"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"url\": \"https://www.tgju.org/currency\",\n  \"formats\": [\n    \"html\"\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        -144
+      ],
+      "id": "33ef3bf3-0fb4-4432-8ed6-e9e5070069b8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "data.html",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "data-market-nameslug=\"price_dollar_rl\"",
+              "cssSelector": "tr[data-market-nameslug=\"price_dollar_rl\"] td.nf"
+            },
+            {
+              "key": "data-market-nameslug=\"price_eur\"",
+              "cssSelector": "tr[data-market-nameslug=\"price_eur\"] td.nf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        -144
+      ],
+      "id": "80b448cd-b262-46ce-9f88-c824e7eb2c2d",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=قیمت دلار: {{ $json['data-market-nameslug=\"price_dollar_rl\"'] }}\nقیمت یورو: {{ $json['data-market-nameslug=\"price_eur\"'] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        -144
+      ],
+      "id": "f388a0d8-c524-4e6e-83d6-afc4832da8c2",
+      "name": "Send a text message1",
+      "webhookId": "5d53fd93-82c5-4f26-a6c2-985268a14c6f",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.tgju.org/profile/geram18",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        256,
+        32
+      ],
+      "id": "f1896f0a-5fa3-4fde-a8dd-467e0de20f1a",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "info.last_trade.PDrCotVal",
+              "cssSelector": "span[data-col=\"info.last_trade.PDrCotVal\"]"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        32
+      ],
+      "id": "5c9b42b1-82df-4682-bbc0-765c8ecb4ad3",
+      "name": "HTML1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=قیمت طلا: {{ $json['info.last_trade.PDrCotVal'] }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        32
+      ],
+      "id": "bdb2d32d-5754-4368-9e5e-1d5b02e07d71",
+      "name": "Send a text message2",
+      "webhookId": "5d53fd93-82c5-4f26-a6c2-985268a14c6f",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "درخواست شما نا معتبر است",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        432
+      ],
+      "id": "74f6a2db-ba30-448f-b020-f0c7743f2612",
+      "name": "Send a text message5",
+      "webhookId": "1f40801e-05a2-4102-b1d2-73e23396a4ca",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "📊 خوش آمدید به ربات قیمت لحظه‌ای!\n\nبا استفاده از این ربات می‌توانید به‌صورت لحظه‌ای با زدن هر کدام از دکمه های زیر از قیمت‌های زیر باخبر شوید 👇\n\n💰 قیمت رمزارزها\nبرای مشاهده قیمت فعلی رمزارزهایی مانند تتر (USDT) و بیت‌کوین (BTC) روی دکمه «قیمت رمزارزها» بزنید.\n\n💵 قیمت ارزها\nبرای دیدن قیمت لحظه‌ای دلار و یورو، دکمه «قیمت ارزها» را انتخاب کنید.\n\n🥇 قیمت طلا\nبرای اطلاع از قیمت لحظه‌ای طلای ۱۸ عیار، روی «قیمت طلا» کلیک کنید.\n\n🧭 راهنمای استفاده:\n1️⃣ ابتدا یکی از گزینه‌های منو را انتخاب کنید.\n2️⃣ ربات به‌صورت خودکار اطلاعات به‌روز را از منابع معتبر دریافت کرده و برای شما ارسال می‌کند.\n3️⃣ در صورت وارد کردن دستور نامعتبر، پیغام «درخواست شما نامعتبر است» دریافت خواهید کرد.",
+        "replyMarkup": "replyKeyboard",
+        "replyKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "قیمت رمزارز ها",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "قیمت ارز ها",
+                    "additionalFields": {}
+                  },
+                  {
+                    "text": "قیمت طلا",
+                    "additionalFields": {}
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "replyKeyboardOptions": {
+          "resize_keyboard": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        240
+      ],
+      "id": "7375be5a-5680-40ba-802c-fec4d598f59a",
+      "name": "Send a text message4",
+      "webhookId": "0f7bfdee-1bae-4f12-bff9-f57de0e3a67e",
+      "credentials": {
+        "telegramApi": {
+          "id": "gF2nF9zBD4lblZwl",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query page": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Query page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "12bcfa22-c77f-47ae-8590-d6ddb77dcc91",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9bf52e572952662d46ed3a74d22938b9999056999d45aa6e06dc09f25d0a2602"
+  },
+  "id": "y5VBq7PNDQi2s1Pj",
+  "tags": []
+}
